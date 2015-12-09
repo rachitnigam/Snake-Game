@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.Random;
 
 public class Snake extends JPanel implements KeyListener,ActionListener
 {
@@ -9,12 +10,15 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 	private final static int panelWidth=500;
   	private final static int panelHeight=400;
   	private final static Color snakeColor=Color.red;
-  	private final static Color insectColor=Color.yellow;
-  	private final static int snakeLength=10;
+  	private final static Color insectColor=Color.black;
+  	private final static Color backgroundColor=Color.white;
+  	private final static int snakeLength=25;
   	private final static int refreshRate=17;
   	private final static int snakeSpeed=20;
-  	private final static int locationWidth=8;
+  	private final static int locationWidth=5;
 
+//--------------------------------------------------------------------------------
+//Attribute and variables for the snake class
 	private class Location
 	{
 		int x;
@@ -67,10 +71,14 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 
 	JTextField typingArea;
 
-	Timer frameRefresh = new Timer(refreshRate,this);
-	Timer snakeMove = new Timer(snakeSpeed,this);
+	private Timer frameRefresh = new Timer(refreshRate,this);
+	private Timer snakeMove = new Timer(snakeSpeed,this);
 
-  	private String snakeDirection; 
+  	private String snakeDirection;
+
+  	private Random r = new java.util.Random(); 
+
+//--------------------------------------------------------------------------------
 
   	//Initialize "snake" as a linked list
   	public void initializeSnake()
@@ -95,7 +103,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
  		typingArea.addKeyListener(this);
 
  		initializeSnake();
-  		insect = new Location();
+  		insect = new Location(r.nextInt(panelWidth), r.nextInt(panelHeight));
   		snakeDirection = new String("up");
 
   		snakeMove.start();
@@ -127,6 +135,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 
   	public void drawSnake(Graphics g)
   	{
+  		g.setColor(snakeColor);
   		Location pointer = head;
   		int offset=0;
   		while(pointer!=null)
@@ -135,6 +144,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
   			offset+=100;
   			pointer = pointer.rear;  			
   		}
+  		g.setColor(backgroundColor);
   	}
 
 	public void paintComponent(Graphics g)
@@ -146,6 +156,11 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 
 		//Draw the snake
 		drawSnake(g);
+
+		//Draw the insect
+		g.setColor(insectColor);
+		g.drawString("*",insect.x,insect.y);
+		g.setColor(backgroundColor);
 	}
   	
   	public void gameOver()
@@ -157,15 +172,37 @@ public class Snake extends JPanel implements KeyListener,ActionListener
   	public boolean hasEatenItself()
   	{
   		boolean flag=false;
+
+  		Location pointer = head.rear;
+
+  		while(pointer!=null)
+  		{
+  			if(Math.abs(head.x-pointer.x)<locationWidth && Math.abs(head.y-pointer.y)<locationWidth)
+  			{
+  				flag=true;
+  				break;
+  			}
+  			else
+  			{
+  				pointer=pointer.rear;
+  			}
+  		}
+
   		return flag;
   	}
 
-  	public boolean hasEatenInsect()
+  	public void hasEatenInsect()
   	{
-  		boolean flag=false;
-  		//Increase size
-  		//Create new insect
-  		return flag;	
+  		if(Math.abs(head.x - insect.x)<locationWidth && Math.abs(head.y - insect.y)<locationWidth)
+  		{
+  			insect.x = r.nextInt(panelWidth);
+  			insect.y = r.nextInt(panelHeight);
+  			
+  			Location temp = new Location(tail.x, tail.y);
+  			tail.link(tail,temp);
+  			tail=temp;
+  		}
+
   	}
 
   	@Override
@@ -182,6 +219,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 	public void keyTyped(KeyEvent e) 
 	{}
 
+	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		if(e.getSource()==frameRefresh)
@@ -210,12 +248,9 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 				else head.x-=locationWidth;
 			}
 
-			//Check conditions
-			// if(hasEatenItself) gameOver();
-			// if(hasEatenInsect) 
-			// {
-			// 	//Increase the length of the snake
-			// }
+			//Conditionals
+			if(hasEatenItself()) gameOver();
+			hasEatenInsect();
 
 			//Move the snake body
 			{
