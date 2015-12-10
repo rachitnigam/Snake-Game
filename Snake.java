@@ -69,7 +69,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 	Location tail;
 	Location insect;
 
-	JTextField typingArea;
+	JButton reset;
 
 	private Timer frameRefresh = new Timer(refreshRate,this);
 	private Timer snakeMove = new Timer(snakeSpeed,this);
@@ -98,9 +98,9 @@ public class Snake extends JPanel implements KeyListener,ActionListener
   	//Constructor
   	public Snake()
   	{
- 		typingArea = new JTextField(20);
- 		this.add(typingArea);
- 		typingArea.addKeyListener(this);
+ 		reset = new JButton("Reset");
+ 		this.add(reset);
+ 		reset.addKeyListener(this);
 
  		initializeSnake();
   		insect = new Location(r.nextInt(panelWidth), r.nextInt(panelHeight));
@@ -224,6 +224,7 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 	{
 		if(e.getSource()==frameRefresh)
 			repaint();
+
 		else if(e.getSource()==snakeMove)
 		{
 			//Move the snake head
@@ -261,6 +262,11 @@ public class Snake extends JPanel implements KeyListener,ActionListener
 					pointer = pointer.next;
 				}
 			}
+		}
+
+		else if(e.getSource()==reset)
+		{
+			
 		}
 	}
 
