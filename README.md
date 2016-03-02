@@ -13,7 +13,7 @@ the snake's own body or the walls.
 over.
 
 
-###Idea behind the implementation 
+###Ideas behind the implementation 
 - The snake is a series of "nodes" which moves on a 2D plane. The board can be represented by a 2D array. Since the project    was initially made for Turbo C++ console, I made it with bounds for a standard 25 X 80 console window. 
  
 - The nodes follow the path taken by the head. This makes it incredibly easy to think of it as linked list. The movement is    of a node is simply the changing it with the coordinates of the node in front of it. This reduces the problem of updating    the position of the snake to just updating the position of the head and propogating the change to the nodes behind it. 
