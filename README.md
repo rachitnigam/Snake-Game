@@ -1,4 +1,4 @@
-##Snake-Game
+##Snake
 
 This is a re-make of the classic game [Snake](https://en.wikipedia.org/wiki/Snake_%28video_game%29). 
 
